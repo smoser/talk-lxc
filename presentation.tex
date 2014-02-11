@@ -49,6 +49,7 @@
 \begin{frame}
    \frametitle{"Hello World"}
    \begin{itemize}
+      \item sudo apt-get install --quiet --assume-yes cgmanager lxc
       \item sudo lxc-create --template=cirros -n source-cirros  -- --version=devel
       \item sudo lxc-clone --snapshot source-cirros c1
       \item sudo lxc-start -n c1
