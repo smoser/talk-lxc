@@ -1,0 +1,16 @@
+#
+sudo apt-get update
+sudo apt-get install --assume-yes docker.io
+
+sudo docker.io pull ubuntu
+sudo docker.io run -i -t ubuntu /bin/bash
+
+## docker index
+## https://index.docker.io/
+
+## docker files
+
+# sudo docker pull shykes/pybuilder
+
+# resources:
+#  http://www.slideshare.net/dotCloud/docker-resentation-meetupparis
