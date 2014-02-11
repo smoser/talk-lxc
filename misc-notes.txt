@@ -1,0 +1,52 @@
+"LXC is a userspace interface for the Linux kernel containment features.
+Through a powerful API and simple tools, it lets Linux users easily
+create and manage system or application containers."
+
+chroot on steroids
+
+zero-overhead Linux only virtualization technology that’s extremely
+flexible but requires you to share your kernel with the host.
+
+lxc-freeze -n <container name>
+
+https://www.stgraber.org/
+
+With this setup my container will have 3 interfaces, eth0 will be the
+usual veth device in the lxcbr0 bridge, eth1 will be the host’s eth2
+moved inside the container (it’ll disappear from the host while the
+container is running) and virt0 will be another veth device in the virbr0
+bridge on the host.
+
+sudo lxc-device add -n p1 /dev/ttyUSB0 /dev/ttyS0
+
+container filesystem sharing (reading container through /proc/<pid>/root)
+mount binding things in.
+
+cloning : btrfs, overlayfs
+
+userdata
+
+security of containers:
+  capabilities / cgroups (man capabilities)
+   historically, unix had 2 categories of processes: owned by root, not owned by root.  kernel 2.2 first had capabilites, which allowed a root process to drop capabilities.
+   example capabilities:
+     cap_sys_boot: reboot and kexec_load
+     cap_sys_chroot: chroot
+     cap_sys_module: ability to load modules
+     cap_net_bind_service: ability to bind to a port < 1024
+     cap_sys_mknod: ability to make device nodes
+
+control groups:
+  https://www.kernel.org/doc/Documentation/cgroups/
+  Resource bean counting (cpu cycles)
+  Resource quotas (memory)
+  Access restrictions to nodes
+    default access none and create/modify limited
+
+apparmor:
+  default profiles limit all known escape attempts
+
+selinux
+seccomp
+
+
