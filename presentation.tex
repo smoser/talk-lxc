@@ -1,0 +1,113 @@
+\documentclass{beamer}
+\usetheme[alternativetitlepage=true]{Torino}
+
+\author{Scott Moser}
+\title{LXC / Linux Containers}
+\institute{Michigan!/usr/group}
+\date{February 11, 2014}
+
+\begin{document}
+
+\begin{frame}[t,plain]
+    \titlepage
+\end{frame}
+
+\begin{frame}
+   \frametitle{The Plan}
+   \begin{itemize}
+      \item What is LXC? Linux Containers?
+      \item linux kernel containment features
+      \item lxc demo
+      \item questions
+   \end{itemize}
+\end{frame}
+
+\begin{frame}
+   \frametitle{Linux Containers?}
+   \begin{itemize}
+      \item Wikipedia: LXC (LinuX Containers) is an operating system-level virtualization method for running multiple isolated Linux systems (containers) on a single control host.
+      \item linuxcontainers.org: LXC is a userspace interface for the Linux kernel containment features.  Through a powerful API and simple tools, it lets Linux users easily create and manage system or application containers.
+      \item "chroot on steroids"
+      \item "it's like bsd jails"
+      \item from the inside looks like a vm
+      \item from the outside looks like processes
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+   \frametitle{Linux Kernel Containment features}
+   \begin{itemize}
+      \item Kernel namespaces (ipc, uts, mount, pid, network and user). Absent: sys, proc
+      \item Apparmor and SELinux profiles
+      \item Kernel capabilities (sys\_boot, sys\_chroot, sys\_module, net\_bind\_service, sys\_mknod)
+      \item Control groups / cgroups (limit memory, accounting/throttling, limit device node operations)
+      \item Chroots (using pivot\_root)
+      \item Seccomp policies
+   \end{itemize}
+\end{frame}
+
+\begin{frame}
+   \frametitle{"Hello World"}
+   \begin{itemize}
+      \item sudo lxc-create --template=cirros -n source-cirros  -- --version=devel
+      \item sudo lxc-clone --snapshot source-cirros c1
+      \item sudo lxc-start -n c1
+      \item sudo lxc-ls --fancy
+      \item ssh cirros@10.0.3.240
+      \item sudo lxc-stop -n c1
+      \item sudo lxc-destroy -n c1
+   \end{itemize}
+\end{frame}
+
+\begin{frame}
+   \frametitle{"Download Template"}
+   \begin{itemize}
+      \item sudo lxc-create --template=download -n x -- --list
+      \item sudo lxc-create --template=download -n source-sid -- --dist=debian --release=sid --arch=amd64
+      \item sudo lxc-clone --snapshot source-sid s1
+      \item sudo lxc-start -n s1
+   \end{itemize}
+\end{frame}
+
+\begin{frame}
+   \frametitle{"We don't need no stinking sudo"}
+   \begin{itemize}
+      \item sudo apt-get install --assume-yes cgmanager
+      \item sudo reboot
+      \item sudo usermod --add-subuids 100000-165536 \$USER
+      \item sudo usermod --add-subgids 100000-165536 \$USER
+      \item echo "\$USER veth lxcbr1 10" | sudo tee -a /etc/lxc/lxc-usernet
+   \end{itemize}
+\end{frame}
+
+\begin{frame}
+   \frametitle{"OK, *now* we don't need no stinking sudo"}
+   \begin{itemize}
+      \item mkdir -p ~/.config/lxc
+      \item cp files/user-default.conf ~/.config/lxc/default.conf
+      \item lxc-create -t download -n t1 -- -d ubuntu -r trusty -a amd64
+      \item lxc-start -n t1
+   \end{itemize}
+\end{frame}
+
+
+\begin{frame}
+   \frametitle{"Ubuntu Cloud"}
+   \begin{itemize}
+      \item sudo lxc-create -t ubuntu-cloud -n source-saucy-cloud -- --release=saucy
+      \item time sudo lxc-clone -o source-saucy-cloud -n sc1 -- --userdata=files/my-userdata
+      \item time sudo lxc-clone --snapshot -o source-saucy-cloud -n sc2 -- --userdata=files/my-userdata
+      \item sudo lxc-start -n sc1
+   \end{itemize}
+\end{frame}
+
+\begin{frame}
+   \frametitle{Resources}
+   \begin{itemize}
+      \item \href{http://linuxcontainers.org}{linuxcontainers.org}
+      \item \href{https://www.stgraber.org/2013/12/20/lxc-1-0-blog-post-series/}{10 part series on LXC 1.0}
+      \item \href{http://lwn.net/Articles/515034/}{LWN.net Secure Linux containers}
+   \end{itemize}
+\end{frame}
+
+\end{document}
